@@ -203,6 +203,10 @@ const result = {
   status: !root.record ? 'none' : over || voidOver ? 'permerror' : 'ok',
   warnings: state.warnings,
 };
+function treeOf(node) {
+  return { name: node.name, lookups: subtotal(node), children: node.children.map(treeOf) };
+}
+if (root.record) result.tree = treeOf(root);
 if (wantFlatten && root.record) result.flattened = flattenedRecords(root);
 
 if (wantJson) {
