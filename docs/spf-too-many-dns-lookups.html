@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SPF "too many DNS lookups": how to find the cause and fix it</title><meta name="description" content="Why SPF fails with too many DNS lookups (permerror), how to count lookups including nested includes, and four ways to get back under the limit of 10."><link rel="canonical" href="https://truone01.github.io/spf-lookup-check/spf-too-many-dns-lookups.html">
+<style>body{font:17px/1.6 system-ui,sans-serif;max-width:760px;margin:0 auto;padding:24px 16px;color:#1d1d1f;background:#fff}code,pre{font:14px ui-monospace,monospace;background:#f3f3f5;border-radius:4px}pre{padding:12px;overflow-x:auto}code{padding:1px 4px;overflow-wrap:anywhere}a{color:#0a58ca}nav,footer{font-size:15px;color:#555}aside{border-left:3px solid #0a58ca;padding:4px 14px;background:#f5f8ff}@media (prefers-color-scheme:dark){body{background:#111;color:#eee}code,pre{background:#222}a{color:#7ab0ff}aside{background:#18202e}nav,footer{color:#aaa}}</style></head><body>
+<nav><a href="https://truone01.github.io/spf-lookup-check/">SPF lookup limit guides</a> · <a href="https://github.com/truone01/spf-lookup-check">Free SPF checker on GitHub</a></nav>
+<main><h1>SPF "too many DNS lookups": how to find the cause and fix it</h1>
+<p>SPF lets a receiving server make at most <strong>10 DNS lookups</strong> while it evaluates your record (RFC 7208, section 4.6.4). If yours needs more, the result is <code>permerror</code>. Most receivers treat that as an SPF failure, and under DMARC a message that fails SPF and has no aligned DKIM signature can go to spam or be rejected.</p>
+<h2>What counts</h2>
+<ul><li><code>include:</code>, <code>a</code>, <code>mx</code>, <code>ptr</code>, <code>exists:</code> and <code>redirect=</code> each count as one lookup.</li>
+<li>Lookups <em>inside</em> included records count too. <code>include:sendgrid.net</code> costs 2, because SendGrid's record includes another.</li>
+<li><code>ip4:</code>, <code>ip6:</code> and <code>all</code> cost nothing.</li>
+<li>Separately, at most 2 "void" lookups (names that return nothing) are allowed.</li></ul>
+<h2>Find the cause</h2>
+<pre>curl -O https://raw.githubusercontent.com/truone01/spf-lookup-check/main/spf-check.mjs
+node spf-check.mjs yourdomain.com</pre>
+<p>The <a href="https://github.com/truone01/spf-lookup-check">free checker</a> prints the total and a tree showing which include uses how many lookups.</p>
+<h2>Fix it</h2>
+<ol><li><strong>Remove includes you don't use any more</strong>: old newsletter tools, a CRM you trialled, a helpdesk you replaced.</li>
+<li><strong>Remove duplicates.</strong> <code>include:spf.protection.outlook.com</code> listed twice, or <code>mx</code> plus the provider's include for the same servers.</li>
+<li><strong>Move senders to subdomains.</strong> Marketing mail from <code>news.yourdomain.com</code> gets its own SPF record and its own 10 lookups. Most email marketing tools support a custom sending subdomain.</li>
+<li><strong>Flatten.</strong> Replace includes with the IP ranges they resolve to. This works immediately, but the list goes stale when a provider changes its ranges. See <a href="spf-flattening-risks.html">SPF flattening: what can go wrong</a>.</li></ol>
+<aside><p>Manage email DNS for many client domains on Cloudflare? <strong>SPFTrim</strong> (in development) will keep every SPF record flattened under 10 lookups, re-check hourly and update the records when a provider's IPs change, with a rollback copy. $12/month for up to 10 domains. It isn't available yet: <a href="https://spftrim.2-29-18-178.sslip.io/?ref=ghpages">price and waitlist</a>.</p></aside>
+</main>
+<footer><p>Free, MIT-licensed tooling. Not affiliated with any email or DNS provider. Last updated 26 November 2026.</p></footer>
+</body></html>

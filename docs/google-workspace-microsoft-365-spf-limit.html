@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Google Workspace + Microsoft 365 + marketing tools: staying under the SPF lookup limit</title><meta name="description" content="How many SPF lookups common senders use (Google Workspace, Microsoft 365, SendGrid, Mailchimp, Zendesk, Salesforce) and how to combine them without hitting the limit of 10."><link rel="canonical" href="https://truone01.github.io/spf-lookup-check/google-workspace-microsoft-365-spf-limit.html">
+<style>body{font:17px/1.6 system-ui,sans-serif;max-width:760px;margin:0 auto;padding:24px 16px;color:#1d1d1f;background:#fff}code,pre{font:14px ui-monospace,monospace;background:#f3f3f5;border-radius:4px}pre{padding:12px;overflow-x:auto}code{padding:1px 4px;overflow-wrap:anywhere}a{color:#0a58ca}nav,footer{font-size:15px;color:#555}aside{border-left:3px solid #0a58ca;padding:4px 14px;background:#f5f8ff}@media (prefers-color-scheme:dark){body{background:#111;color:#eee}code,pre{background:#222}a{color:#7ab0ff}aside{background:#18202e}nav,footer{color:#aaa}}</style></head><body>
+<nav><a href="https://truone01.github.io/spf-lookup-check/">SPF lookup limit guides</a> · <a href="https://github.com/truone01/spf-lookup-check">Free SPF checker on GitHub</a></nav>
+<main><h1>Google Workspace + Microsoft 365 + marketing tools: staying under the SPF lookup limit</h1>
+<p>Most domains hit the 10-lookup limit the same way: one mailbox provider, then a few SaaS tools that each add an include. Measured with the <a href="https://github.com/truone01/spf-lookup-check">free checker</a> on 26 November 2026, here is what some common includes cost:</p>
+<ul><li><code>include:_spf.google.com</code> (Google Workspace): 1</li>
+<li><code>include:spf.protection.outlook.com</code> (Microsoft 365): 1</li>
+<li><code>include:sendgrid.net</code>: 2 (it nests another include)</li>
+<li><code>include:servers.mcsv.net</code> (Mailchimp): 1</li>
+<li><code>include:mail.zendesk.com</code>: 1</li>
+<li><code>include:_spf.salesforce.com</code>: 2 (includes an <code>exists:</code> macro, which can't be flattened)</li></ul>
+<p>Provider records change, so run the checker against your own domain for current numbers.</p>
+<h2>Patterns that stay under 10</h2>
+<ul><li><strong>Only list what sends with your domain in the envelope sender (Return-Path).</strong> Many tools send with their own Return-Path and authenticate with DKIM on your domain. Those don't need to be in your SPF record at all. Check each tool's docs for "custom return-path" or "bounce domain".</li>
+<li><strong>Subdomains per tool</strong> (<code>mail.</code>, <code>news.</code>, <code>support.</code>), each with its own small record.</li>
+<li><strong>Flatten only the stable part</strong>, and keep includes for providers that change often, with a scheduled re-check. See <a href="spf-flattening-risks.html">flattening risks</a>.</li></ul>
+<aside><p>Manage email DNS for many client domains on Cloudflare? <strong>SPFTrim</strong> (in development) will keep every SPF record flattened under 10 lookups, re-check hourly and update the records when a provider's IPs change, with a rollback copy. $12/month for up to 10 domains. It isn't available yet: <a href="https://spftrim.2-29-18-178.sslip.io/?ref=ghpages">price and waitlist</a>.</p></aside>
+</main>
+<footer><p>Free, MIT-licensed tooling. Not affiliated with any email or DNS provider. Last updated 26 November 2026.</p></footer>
+</body></html>

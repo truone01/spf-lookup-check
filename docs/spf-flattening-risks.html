@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SPF flattening: what can go wrong, and how to do it safely</title><meta name="description" content="SPF flattening replaces includes with IP addresses to get under the 10-lookup limit. Here are the risks (stale IPs, record length, macros) and how to keep a flattened record correct."><link rel="canonical" href="https://truone01.github.io/spf-lookup-check/spf-flattening-risks.html">
+<style>body{font:17px/1.6 system-ui,sans-serif;max-width:760px;margin:0 auto;padding:24px 16px;color:#1d1d1f;background:#fff}code,pre{font:14px ui-monospace,monospace;background:#f3f3f5;border-radius:4px}pre{padding:12px;overflow-x:auto}code{padding:1px 4px;overflow-wrap:anywhere}a{color:#0a58ca}nav,footer{font-size:15px;color:#555}aside{border-left:3px solid #0a58ca;padding:4px 14px;background:#f5f8ff}@media (prefers-color-scheme:dark){body{background:#111;color:#eee}code,pre{background:#222}a{color:#7ab0ff}aside{background:#18202e}nav,footer{color:#aaa}}</style></head><body>
+<nav><a href="https://truone01.github.io/spf-lookup-check/">SPF lookup limit guides</a> · <a href="https://github.com/truone01/spf-lookup-check">Free SPF checker on GitHub</a></nav>
+<main><h1>SPF flattening: what can go wrong, and how to do it safely</h1>
+<p>Flattening means replacing <code>include:</code> mechanisms with the <code>ip4:</code> and <code>ip6:</code> ranges they currently resolve to. IP mechanisms cost no DNS lookups, so a flattened record easily fits under the limit of 10.</p>
+<h2>The risks</h2>
+<ul><li><strong>Stale IPs.</strong> Providers change their sending ranges without telling you. A static flattened record keeps the old list, and mail from the new IPs fails SPF. This is the main risk.</li>
+<li><strong>Length.</strong> A single TXT string is limited to 255 characters. Longer records must be split into several strings, and a very long record can push DNS responses past 512 bytes. Splitting into chained records (<code>include:_spf1.yourdomain.com</code>, ...) avoids that, and costs one lookup per chained record.</li>
+<li><strong>Macros and <code>exists:</code>.</strong> Some providers (Salesforce, for example) use <code>exists:%{i}...</code>. These can't be flattened and have to stay as they are.</li>
+<li><strong>Qualifiers.</strong> Only pass (<code>+</code>) mechanisms should be flattened. Keep <code>-include:</code> or <code>~include:</code> as-is.</li></ul>
+<h2>Doing it safely</h2>
+<ol><li>Run <code>node spf-check.mjs yourdomain.com --flatten</code> with the <a href="https://github.com/truone01/spf-lookup-check">free checker</a> to get a preview, split automatically if it's long.</li>
+<li>Keep a copy of your original record.</li>
+<li>Re-check on a schedule (daily at least) and update the record when the resolved ranges change. Open-source flatteners such as cfspflat and sender_policy_flattener can do this on a cron job you run yourself.</li></ol>
+<aside><p>Manage email DNS for many client domains on Cloudflare? <strong>SPFTrim</strong> (in development) will keep every SPF record flattened under 10 lookups, re-check hourly and update the records when a provider's IPs change, with a rollback copy. $12/month for up to 10 domains. It isn't available yet: <a href="https://spftrim.2-29-18-178.sslip.io/?ref=ghpages">price and waitlist</a>.</p></aside>
+</main>
+<footer><p>Free, MIT-licensed tooling. Not affiliated with any email or DNS provider. Last updated 26 November 2026.</p></footer>
+</body></html>
