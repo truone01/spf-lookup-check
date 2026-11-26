@@ -14,6 +14,7 @@
 <ol><li>Run <code>node spf-check.mjs yourdomain.com --flatten</code> with the <a href="https://github.com/truone01/spf-lookup-check">free checker</a> to get a preview, split automatically if it's long.</li>
 <li>Keep a copy of your original record.</li>
 <li>Re-check on a schedule (daily at least) and update the record when the resolved ranges change. Open-source flatteners such as cfspflat and sender_policy_flattener can do this on a cron job you run yourself.</li></ol>
+<p>No command line handy? Use the <a href="https://spftrim.2-29-18-178.sslip.io/spf-lookup-checker?ref=ghpages">online SPF lookup checker</a>: same checks, in the browser.</p>
 <aside><p>Manage email DNS for many client domains on Cloudflare? <strong>SPFTrim</strong> (in development) will keep every SPF record flattened under 10 lookups, re-check hourly and update the records when a provider's IPs change, with a rollback copy. $12/month for up to 10 domains. It isn't available yet: <a href="https://spftrim.2-29-18-178.sslip.io/?ref=ghpages">price and waitlist</a>.</p></aside>
 </main>
 <footer><p>Free, MIT-licensed tooling. Not affiliated with any email or DNS provider. Last updated 26 November 2026.</p></footer>

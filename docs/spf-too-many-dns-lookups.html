@@ -19,6 +19,7 @@ node spf-check.mjs yourdomain.com</pre>
 <li><strong>Remove duplicates.</strong> <code>include:spf.protection.outlook.com</code> listed twice, or <code>mx</code> plus the provider's include for the same servers.</li>
 <li><strong>Move senders to subdomains.</strong> Marketing mail from <code>news.yourdomain.com</code> gets its own SPF record and its own 10 lookups. Most email marketing tools support a custom sending subdomain.</li>
 <li><strong>Flatten.</strong> Replace includes with the IP ranges they resolve to. This works immediately, but the list goes stale when a provider changes its ranges. See <a href="spf-flattening-risks.html">SPF flattening: what can go wrong</a>.</li></ol>
+<p>No command line handy? Use the <a href="https://spftrim.2-29-18-178.sslip.io/spf-lookup-checker?ref=ghpages">online SPF lookup checker</a>: same checks, in the browser.</p>
 <aside><p>Manage email DNS for many client domains on Cloudflare? <strong>SPFTrim</strong> (in development) will keep every SPF record flattened under 10 lookups, re-check hourly and update the records when a provider's IPs change, with a rollback copy. $12/month for up to 10 domains. It isn't available yet: <a href="https://spftrim.2-29-18-178.sslip.io/?ref=ghpages">price and waitlist</a>.</p></aside>
 </main>
 <footer><p>Free, MIT-licensed tooling. Not affiliated with any email or DNS provider. Last updated 26 November 2026.</p></footer>

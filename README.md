@@ -26,6 +26,8 @@ Warnings:
 ```
 (Real output, 26 November 2026. github.com sits exactly at the limit: one more include and its SPF fails.)
 
+Prefer the browser? Use the [online SPF lookup checker](https://spftrim.2-29-18-178.sslip.io/spf-lookup-checker?ref=github).
+
 ## Use
 
 ```bash

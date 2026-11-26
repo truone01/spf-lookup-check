@@ -16,6 +16,7 @@
 <ul><li><strong>Only list what sends with your domain in the envelope sender (Return-Path).</strong> Many tools send with their own Return-Path and authenticate with DKIM on your domain. Those don't need to be in your SPF record at all. Check each tool's docs for "custom return-path" or "bounce domain".</li>
 <li><strong>Subdomains per tool</strong> (<code>mail.</code>, <code>news.</code>, <code>support.</code>), each with its own small record.</li>
 <li><strong>Flatten only the stable part</strong>, and keep includes for providers that change often, with a scheduled re-check. See <a href="spf-flattening-risks.html">flattening risks</a>.</li></ul>
+<p>No command line handy? Use the <a href="https://spftrim.2-29-18-178.sslip.io/spf-lookup-checker?ref=ghpages">online SPF lookup checker</a>: same checks, in the browser.</p>
 <aside><p>Manage email DNS for many client domains on Cloudflare? <strong>SPFTrim</strong> (in development) will keep every SPF record flattened under 10 lookups, re-check hourly and update the records when a provider's IPs change, with a rollback copy. $12/month for up to 10 domains. It isn't available yet: <a href="https://spftrim.2-29-18-178.sslip.io/?ref=ghpages">price and waitlist</a>.</p></aside>
 </main>
 <footer><p>Free, MIT-licensed tooling. Not affiliated with any email or DNS provider. Last updated 26 November 2026.</p></footer>
