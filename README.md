@@ -46,6 +46,26 @@ What it checks:
 - `mx` returning more than 10 hosts
 - `ptr` (deprecated), macros and `exists:`, which can't be flattened
 
+## How many lookups common includes cost
+
+Measured with this script on 28 November 2026 (cost = 1 for the include + the lookups inside it). Providers change their records, so re-check before you rely on a number.
+
+| Include | Lookups |
+|---|---|
+| `include:intuit.com` | 11 (over the limit on its own) |
+| `include:websitewelcome.com` (HostGator) | 8 |
+| `include:email.freshdesk.com` | 7 |
+| `include:shopify.com` | 5 (`shops.shopify.com`: 1) |
+| `include:zoho.com` | 5 (`zohomail.com`: 2) |
+| `include:mailgun.org` | 5 |
+| `include:secureserver.net` (GoDaddy) | 3 |
+| `include:_spf.salesforce.com` | 2 |
+| `include:sendgrid.net` | 2 |
+| `include:_spf.google.com` | 1 |
+| `include:spf.protection.outlook.com` | 1 |
+
+Live numbers for these and more: [SPF lookup cost of common includes](https://spftrim.2-29-18-178.sslip.io/spf-lookups?ref=github).
+
 ## Flattening: fixing it
 
 Ways to get back under 10, best first:
